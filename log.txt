@@ -1,0 +1,70 @@
+2026-04-10 18:08:16 | http://malicious.com | malicious | matched blocked domain
+2026-04-10 18:09:12 | http://login.malicious.com | malicious | matched blocked domain
+2026-04-10 18:10:20 | http://google.com@evil.com | suspicious | contains @ symbol
+2026-04-10 18:11:45 | http://google.com | safe | no suspicious pattern found
+2026-04-10 18:30:00 | http://google-login-security.com | suspicious | brand name with phishing keywords
+2026-04-10 18:31:10 | http://paypal-verify-account.net | suspicious | brand name with phishing keywords
+2026-04-10 18:32:11 | http://microsoft-secure-update.org | suspicious | brand name with phishing keywords
+2026-04-10 18:33:06 | http://google.com | safe | no suspicious pattern found
+2026-04-10 18:33:56 | http://amazon.com | safe | no suspicious pattern found
+2026-04-10 18:47:29 | http://accounts.google.com/login | safe | no suspicious pattern found
+2026-04-10 18:48:51 | http://paypal.com/security | safe | no suspicious pattern found
+2026-04-10 18:49:45 | http://microsoft.com/account/reset | safe | no suspicious pattern found
+2026-04-10 18:50:49 | http://google-login-security.com | suspicious | brand name with phishing keywords on non-official domain
+2026-04-10 18:51:56 | http://paypal-verify-account.net | suspicious | brand name with phishing keywords on non-official domain
+2026-04-10 18:52:43 | http://microsoft-secure-update.org | suspicious | brand name with phishing keywords on non-official domain
+2026-04-10 19:00:11 | http://192.168.1.10/login | suspicious | uses raw IP address
+2026-04-10 19:01:21 | http://185.243.115.84/secure-update | suspicious | uses raw IP address
+2026-04-10 19:01:54 | http://google.com | safe | no suspicious pattern found
+2026-04-10 19:02:34 | http://accounts.google.com | safe | no suspicious pattern found
+2026-04-10 19:08:44 | http://bit.ly/abc123 | suspicious | uses URL shortener
+2026-04-10 19:09:27 | http://tinyurl.com/test | suspicious | uses URL shortener
+2026-04-10 19:10:21 | http://t.co/xyz | suspicious | uses URL shortener
+2026-04-10 19:10:47 | http://google.com | safe | no suspicious pattern found
+2026-04-10 20:06:27 | http://malicious.com | malicious | matched blocked domain
+2026-04-10 20:07:02 | http://bit.ly/test | suspicious | uses URL shortener
+2026-04-10 20:07:36 | http://google.com | safe | no suspicious pattern found
+2026-04-16 18:25:41 | http://google.com | safe | no suspicious pattern found
+2026-04-16 18:26:07 | http://bit.ly/test | suspicious | uses URL shortener
+2026-04-16 18:26:51 | http://google-login-security.com | suspicious | brand + phishing keywords on non-official domain
+2026-04-16 18:55:53 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:18:53 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:25:47 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:26:07 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:26:09 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:26:10 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:26:10 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:26:11 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:26:12 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:26:13 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:26:13 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:26:14 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:27:18 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:27:20 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:27:21 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:27:22 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:27:23 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:27:24 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:27:51 | http://google-security-login | suspicious | brand + phishing keywords on non-official domain
+2026-04-16 19:27:54 | http://google-security-login | suspicious | brand + phishing keywords on non-official domain
+2026-04-16 19:27:54 | http://google-security-login | suspicious | brand + phishing keywords on non-official domain
+2026-04-16 19:52:27 | http://google.com | safe | no suspicious pattern found
+2026-04-16 19:52:59 | https://www.wikipedia.org | safe | no suspicious pattern found
+2026-04-16 19:53:29 | https:/openai.com | safe | no suspicious pattern found
+2026-04-16 19:53:50 | https:/github.com | safe | no suspicious pattern found
+2026-04-16 19:54:02 | https:github.com | safe | no suspicious pattern found
+2026-04-16 19:54:34 | https://hithub.com | safe | no suspicious pattern found
+2026-04-16 19:55:26 | https://bit.ly/tes123 | suspicious | uses URL shortener
+2026-04-16 19:56:02 | http://tinyurl.com/demo | suspicious | uses URL shortener
+2026-04-16 19:56:42 | http://google.com@evil.com | suspicious | contains @ symbol
+2026-04-16 19:57:23 | http://a.b.cd.example.com | suspicious | too many subdomains
+2026-04-16 19:57:52 | http://google-login-security.com | suspicious | brand + phishing keywords on non-official domain
+2026-04-16 19:58:30 | http://login.malicious.com | malicious | matched blocked domain
+2026-04-16 19:59:09 | http://random-malware-test-domain.xyz | safe | no suspicious pattern found
+2026-04-16 20:32:20 | http://secure-paypal-login-update.com | suspicious | brand + phishing keywords on non-official domain
+2026-04-16 22:13:18.116389 | http://google.com@evil.com | suspicious | contains @ symbol
+2026-04-16 22:13:37.508114 | http://google.com@evil.com | suspicious | contains @ symbol
+2026-04-16 22:13:38.304837 | http://google.com@evil.com | suspicious | contains @ symbol
+2026-04-16 22:18:53.818125 | http://google.com@evil.com | suspicious | contains @ symbol
+2026-04-16 22:30:30.142247 | http://google.com@evil.com | suspicious | contains @ symbol
+2026-04-16 22:35:13.724145 | http://google.com@evil.com | suspicious | contains @ symbol
