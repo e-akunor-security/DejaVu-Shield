@@ -1,68 +1,28 @@
-# 🛡️ DejaVu Shield (Beta v1.0)
+# DejaVu Shield
 
-DejaVu Shield is a lightweight cybersecurity tool designed to analyze URLs and detect potentially malicious or suspicious links.
+DejaVu Shield is a cybersecurity-focused desktop application built with Python and Tkinter.
 
-## 🔍 Features
+## Features
 
-* Local threat detection:
+* URL reputation analysis
+* VirusTotal integration
+* Threat scanning
+* Logging system
+* Windows executable support
+* Dark-themed GUI
 
-  * Phishing-style domains
-  * Suspicious keywords
-  * URL shorteners
-  * Raw IP addresses
-  * “@” redirection trick
+## Technologies Used
 
-* External threat intelligence:
+* Python
+* Tkinter
+* Requests
+* PyInstaller
 
-  * Integration with URLhaus API
+## Windows Build
 
-* Risk scoring system:
+The application can be packaged into a standalone Windows executable using PyInstaller.
 
-  * Assigns a score (0–100) based on risk level
+## Disclaimer
 
-* Logging system:
+This tool is intended for educational and defensive cybersecurity purposes only.
 
-  * Records all analyzed URLs
-  * View logs inside the application
-
-* User-friendly GUI:
-
-  * Built with Tkinter
-  * Clean and simple interface
-
-## ⚠️ Status
-
-This is a **Beta version** and is intended for testing and learning purposes.
-
-## ▶️ How to Run
-
-### Option 1 (Recommended)
-
-Run the packaged application:
-
-```
-./DejaVuShield
-```
-
-### Option 2 (Developer Mode)
-
-```
-python app.py
-```
-
-## 🧠 How It Works
-
-DejaVu Shield uses a layered approach:
-
-1. Fast local checks (pattern-based detection)
-2. External intelligence lookup (URLhaus)
-3. Risk scoring and classification
-
-## 📌 Disclaimer
-
-This tool is for educational and testing purposes only.
-It does not guarantee complete protection against all threats.
-
-## 👨‍💻 Author
-
-Developed by Emmanuel
