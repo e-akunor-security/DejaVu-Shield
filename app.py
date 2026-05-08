@@ -1,6 +1,9 @@
 import tkinter as tk
+from tkinter import ttk
 from datetime import datetime
 import requests
+
+VT_API_KEY = "b2520d995c9ef62f0311019ac49f2b45be0643bff8732891de631f1d1c4da558"
 
 # -----------------------------
 # DATA
@@ -9,6 +12,8 @@ import requests
 BLOCKED_DOMAINS = ["malicious.com", "badsite.net"]
 
 URL_SHORTENERS = ["bit.ly", "tinyurl.com", "t.co"]
+
+SUSPICIOUS_TLDS = [".zip", ".top", ".xyz", ".ru", ".click", ".gq", ".tk"]
 
 OFFICIAL_BRANDS = {
     "paypal": "paypal.com",
@@ -54,12 +59,86 @@ def check_urlhaus(url):
 
     return False, ""
 
+def check_virustotal(url):
+    try:
+        headers = {
+            "x-apikey": VT_API_KEY
+        }
+
+        response = requests.post(
+            "https://www.virustotal.com/api/v3/urls",
+            headers=headers,
+            data={"url": url},
+            timeout=5
+        )
+
+        if response.status_code != 200:
+            return False, "VirusTotal unavailable", "unknown", 0
+
+        data = response.json()
+        analysis_id = data["data"]["id"]
+
+        report = requests.get(
+            f"https://www.virustotal.com/api/v3/analyses/{analysis_id}",
+            headers=headers,
+            timeout=5
+        )
+
+        if report.status_code != 200:
+            return False, "VirusTotal report unavailable", "unknown", 0
+
+        report_data = report.json()
+        stats = report_data["data"]["attributes"]["stats"]
+
+        malicious = stats.get("malicious", 0)
+        suspicious = stats.get("suspicious", 0)
+
+        total_flags = malicious + suspicious
+
+        # ✅ NEW: classification
+        if total_flags == 0:
+            status = "safe"
+            score = 10
+        elif total_flags <= 2:
+            status = "suspicious"
+            score = 45
+        elif total_flags <= 5:
+            status = "suspicious"
+            score = 70
+        elif total_flags <= 10:
+            status = "malicious"
+            score = 88
+        else:
+            status = "malicious"
+            score = 98
+
+        return True, f"{total_flags} vendors flagged this URL", status, score
+
+    except Exception:
+        return False, "VirusTotal error", "unknown", 0
+
+
 # -----------------------------
 # MAIN LOGIC (FAST FIRST)
 # -----------------------------
 
 def check_url(url):
     domain = extract_domain(url)
+    # Suspicious TLDs
+    for tld in SUSPICIOUS_TLDS:
+        if domain.endswith(tld):
+            return "suspicious", "uses suspicious top-level domain", "Local Detection", 68
+
+    # Punycode trick
+    if "xn--" in domain:
+        return "suspicious", "contains punycode / lookalike domain", "Local Detection", 78
+
+    # Fake secure wording
+    fake_words = ["secure", "verify", "update", "login", "account"]
+
+    for word in fake_words:
+        if word in domain and not domain.endswith(".com"):
+            return "suspicious", "contains phishing-style trust wording", "Local Detection", 72
 
     # FAST CHECKS FIRST ⚡
 
@@ -87,12 +166,54 @@ def check_url(url):
                     if not is_official_domain(domain, official):
                         return "suspicious", "phishing-style domain", "Local Detection", 75
 
-    # EXTERNAL CHECK LAST 🌐
+    def check_url(url):
+        domain = extract_domain(url)
+
+    # FAST LOCAL CHECKS FIRST
+
+    if "@" in url:
+        return "suspicious", "contains @ symbol", "Local Detection", 55
+
+    if domain in URL_SHORTENERS:
+        return "suspicious", "uses URL shortener", "Local Detection", 60
+
+    if is_ip_address(domain):
+        return "suspicious", "uses raw IP address", "Local Detection", 65
+
+    if len(domain.split(".")) > 3:
+        return "suspicious", "too many subdomains", "Local Detection", 50
+
+    for bad_domain in BLOCKED_DOMAINS:
+        if domain == bad_domain or domain.endswith("." + bad_domain):
+            return "malicious", "matched blocked domain", "Local Detection", 90
+
+    # phishing-style checks
+    for brand, official in OFFICIAL_BRANDS.items():
+        if brand in domain:
+            for word in SUSPICIOUS_WORDS:
+                if word in domain:
+                    if not is_official_domain(domain, official):
+                        return "suspicious", "phishing-style domain", "Local Detection", 75
+
+    # -----------------------------
+    # External Intelligence - URLhaus
+    # -----------------------------
     found, reason = check_urlhaus(url)
 
     if found:
-        return "malicious", reason, "External Intelligence", 95
+        return "malicious", reason, "URLhaus", 95
 
+ # -----------------------------
+# External Intelligence - VirusTotal
+# -----------------------------
+    vt_found, vt_reason, vt_status, vt_score = check_virustotal(url)
+
+    if vt_found:
+        return vt_status, vt_reason, "VirusTotal", vt_score
+
+    # -----------------------------
+    # Final Safe
+    # -----------------------------
     return "safe", "no suspicious pattern found", "Local Detection", 10
 
 # -----------------------------
@@ -136,7 +257,23 @@ def run_check():
 
     reason_label.config(text="Reason: " + reason)
     source_label.config(text="Source: " + source)
+
     score_label.config(text="Risk Score: " + str(score))
+    risk_bar["value"] = score
+
+    if score <= 30:
+        score_label.config(fg="green")
+
+    elif score <= 69:
+        score_label.config(fg="orange")
+
+    else:
+        score_label.config(fg="red")
+
+    history_list.insert(0, url + " - " + result.upper())
+
+    if history_list.size() > 5:
+        history_list.delete(5)
 
 def clear_fields():
     entry.delete(0, tk.END)
@@ -144,6 +281,7 @@ def clear_fields():
     reason_label.config(text="Reason: ")
     source_label.config(text="Source: ")
     score_label.config(text="Risk Score: ")
+    risk_bar["value"] = 0
 
 def show_about():
     about_window = tk.Toplevel(root)
@@ -153,6 +291,27 @@ def show_about():
     tk.Label(about_window, text="DejaVu Shield", font=("Arial", 14, "bold")).pack(pady=10)
     tk.Label(about_window, text="Version 1.0 (Beta)").pack(pady=5)
     tk.Label(about_window, text="A personal security tool\nfor analyzing suspicious links.").pack(pady=5)
+
+def export_report():
+    with open("report.txt", "w") as file:
+        file.write("DejaVu Shield Report\n")
+        file.write("====================\n\n")
+
+        for i in range(history_list.size()):
+            file.write(history_list.get(i) + "\n")
+
+def export_csv():
+    with open("report.csv", "w") as file:
+        file.write("URL,Result\n")
+
+        for i in range(history_list.size()):
+            item = history_list.get(i)
+
+            if " - " in item:
+                parts = item.split(" - ", 1)
+                url = parts[0]
+                result = parts[1]
+                file.write(url + "," + result + "\n")
  
 def view_logs():
     log_window = tk.Toplevel(root)
@@ -165,16 +324,23 @@ def view_logs():
     try:
         with open("log.txt", "r") as file:
             for line in file:
-                if "malicious" in line:
+                lower_line = line.lower()
+
+                if "malicious" in lower_line:
                     text_area.insert(tk.END, line, "malicious")
-                elif "suspicious" in line:
+
+                elif "suspicious" in lower_line:
                     text_area.insert(tk.END, line, "suspicious")
+
+                elif "safe" in lower_line:
+                    text_area.insert(tk.END, line, "safe")
+
                 else:
                     text_area.insert(tk.END, line)
 
-        # Colors
         text_area.tag_config("malicious", foreground="red")
         text_area.tag_config("suspicious", foreground="orange")
+        text_area.tag_config("safe", foreground="green")
 
     except FileNotFoundError:
         text_area.insert(tk.END, "No logs found.")
@@ -202,7 +368,8 @@ icon = PhotoImage(file=icon_path)
 root.iconphoto(True, icon)
 
 root.title("DejaVu Shield")
-root.geometry("600x650")
+root.geometry("620x700")
+root.configure(bg="#1e1e1e")
 
 # Title
 tk.Label(root, text="DejaVu Shield", font=("Arial", 16, "bold")).pack(pady=10)
@@ -211,29 +378,54 @@ tk.Label(root, text="DejaVu Shield", font=("Arial", 16, "bold")).pack(pady=10)
 tk.Label(root, text="Enter URL:", font=("Arial", 12)).pack()
 
 # Input field (bigger)
-entry = tk.Entry(root, width=70, font=("Arial", 11))
+entry = tk.Entry(root, width=50, bg="#2d2d2d", fg="white", insertbackground="white")
 entry.pack(pady=10)
 
 # Buttons (bigger)
-tk.Button(root, text="Check", command=run_check, width=20, height=2).pack(pady=5)
-tk.Button(root, text="Clear", command=clear_fields, width=20, height=2).pack(pady=5)
-tk.Button(root, text="View Logs", command=view_logs, width=20, height=2).pack(pady=5)
-tk.Button(root, text="About", command=show_about, width=20, height=2).pack(pady=5)
+button_frame = tk.Frame(root, bg="#1e1e1e")
+button_frame.pack(pady=8)
+
+tk.Button(button_frame, text="Check", command=run_check, width=12, bg="#333333", fg="white").grid(row=0, column=0, padx=3, pady=3)
+
+tk.Button(button_frame, text="Clear", command=clear_fields, width=12, bg="#333333", fg="white").grid(row=0, column=1, padx=3, pady=3)
+
+tk.Button(button_frame, text="Logs", command=view_logs, width=12, bg="#333333", fg="white").grid(row=0, column=2, padx=3, pady=3)
+
+tk.Button(button_frame, text="About", command=show_about, width=12, bg="#333333", fg="white").grid(row=1, column=0, padx=3, pady=3)
+
+tk.Button(button_frame, text="TXT", command=export_report, width=12, bg="#333333", fg="white").grid(row=1, column=1, padx=3, pady=3)
+
+tk.Button(button_frame, text="CSV", command=export_csv, width=12, bg="#333333", fg="white").grid(row=1, column=2, padx=3, pady=3)
 
 # Result
-result_label = tk.Label(root, text="Result: ", font=("Arial", 12, "bold"))
+result_label = tk.Label(root, text="Result: ", bg="#1e1e1e", fg="white")
 result_label.pack(pady=10)
 
 # Reason
-reason_label = tk.Label(root, text="Reason: ", font=("Arial", 11))
+reason_label = tk.Label(root, text="Reason: ", bg="#1e1e1e", fg="white")
 reason_label.pack(pady=5)
 
 # Source
-source_label = tk.Label(root, text="Source: ", font=("Arial", 11))
+source_label = tk.Label(root, text="Source: ", bg="#1e1e1e", fg="white")
 source_label.pack(pady=5)
 
 # Risk Score
-score_label = tk.Label(root, text="Risk Score: ", font=("Arial", 11, "bold"))
+score_label = tk.Label(root, text="Risk Score: ", bg="#1e1e1e", fg="white")
 score_label.pack(pady=10)
+
+risk_bar = ttk.Progressbar(root, length=300, mode="determinate", maximum=100)
+risk_bar.pack(pady=8)
+
+tk.Label(root, text="Recent Scans", bg="#1e1e1e", fg="white").pack(pady=(10, 0))
+
+
+history_list = tk.Listbox(
+    root,
+    width=55,
+    height=3,
+    bg="#2d2d2d",
+    fg="white"
+)
+history_list.pack(pady=5, fill="x", padx=20)
 
 root.mainloop()

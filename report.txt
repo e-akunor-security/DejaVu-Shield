@@ -1,0 +1,6 @@
+DejaVu Shield Report
+====================
+
+https://malicious.com - MALICIOUS
+https://google.com@evil.com - SUSPICIOUS
+https://google.com - SAFE
