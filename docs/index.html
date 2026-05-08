@@ -1,0 +1,248 @@
+<!-- Website for DejaVu Shield -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DejaVu Shield - Cybersecurity Threat Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #222;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #667eea;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        section {
+            margin: 40px 0;
+        }
+        
+        section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        
+        .button:hover {
+            background: #764ba2;
+        }
+        
+        footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .tech-item {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🛡️ DejaVu Shield</h1>
+        <p>Professional Cybersecurity Threat Analysis Tool</p>
+    </header>
+    
+    <nav>
+        <a href="#features">Features</a>
+        <a href="#tech">Technology</a>
+        <a href="#installation">Installation</a>
+        <a href="https://github.com/e-akunor-security/DejaVu-Shield">GitHub</a>
+    </nav>
+    
+    <div class="container">
+        <section id="about">
+            <h2>About DejaVu Shield</h2>
+            <p>DejaVu Shield is a comprehensive cybersecurity desktop application designed for security professionals and researchers. It provides real-time threat analysis, URL reputation checking, and advanced threat scanning capabilities.</p>
+            <p style="margin-top: 15px;">Built with Python and featuring a modern Tkinter GUI, DejaVu Shield integrates with VirusTotal for industry-leading threat intelligence.</p>
+        </section>
+        
+        <section id="features">
+            <h2>Key Features</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h3>🔍 URL Analysis</h3>
+                    <p>Check URLs against multiple threat databases for comprehensive safety analysis.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🦠 Threat Scanning</h3>
+                    <p>Real-time threat detection and analysis with detailed threat reports.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Logging System</h3>
+                    <p>Complete audit trails for all operations and security events.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🪟 Windows Executable</h3>
+                    <p>Deploy as standalone .exe without Python installation required.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎨 Modern UI</h3>
+                    <p>Professional dark-themed interface with intuitive controls.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ Fast & Efficient</h3>
+                    <p>Optimized performance for rapid threat analysis and scanning.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="tech">
+            <h2>Technology Stack</h2>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <strong>Python</strong>
+                    <p>Core language</p>
+                </div>
+                <div class="tech-item">
+                    <strong>Tkinter</strong>
+                    <p>GUI Framework</p>
+                </div>
+                <div class="tech-item">
+                    <strong>VirusTotal</strong>
+                    <p>Threat Intelligence</p>
+                </div>
+                <div class="tech-item">
+                    <strong>PyInstaller</strong>
+                    <p>Executable Builder</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="installation">
+            <h2>Quick Start</h2>
+            <h3>System Requirements</h3>
+            <ul style="margin-left: 20px; margin-bottom: 15px;">
+                <li>Python 3.7 or higher</li>
+                <li>Windows 7 or later (for executable)</li>
+                <li>VirusTotal API key (free)</li>
+            </ul>
+            
+            <h3>Installation Steps</h3>
+            <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;"><code>
+# Clone repository
+git clone https://github.com/e-akunor-security/DejaVu-Shield.git
+cd DejaVu-Shield
+
+# Create virtual environment
+python -m venv venv
+venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure API key
+# Create .env file with your VirusTotal API key
+
+# Run application
+python main.py
+            </code></pre>
+            
+            <div style="margin-top: 20px;">
+                <a href="https://github.com/e-akunor-security/DejaVu-Shield" class="button">View on GitHub</a>
+                <a href="https://github.com/e-akunor-security/DejaVu-Shield#-installation" class="button">Full Installation Guide</a>
+            </div>
+        </section>
+        
+        <section>
+            <h2>License & Disclaimer</h2>
+            <p><strong>License:</strong> MIT License - See LICENSE file for details</p>
+            <p><strong>Disclaimer:</strong> This tool is intended for educational and defensive cybersecurity purposes only. Use responsibly and in compliance with all applicable laws and regulations.</p>
+        </section>
+    </div>
+    
+    <footer>
+        <p>&copy; 2026 <a href="https://github.com/e-akunor-security" style="color: #667eea;">e-akunor-security</a>. All rights reserved.</p>
+        <p style="margin-top: 10px;"><a href="https://github.com/e-akunor-security/DejaVu-Shield" style="color: #667eea;">GitHub Repository</a></p>
+    </footer>
+</body>
+</html>
