@@ -1,0 +1,5 @@
+<!-- GitHub Pages Configuration -->
+theme: jekyll-theme-minimal
+title: DejaVu Shield
+description: A professional cybersecurity desktop application for threat analysis and URL reputation checking using VirusTotal integration
+show_downloads: true
