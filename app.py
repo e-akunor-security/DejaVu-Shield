@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
 import requests
+import hashlib
+import os
+from tkinter import filedialog
 
 VT_API_KEY = "b2520d995c9ef62f0311019ac49f2b45be0643bff8732891de631f1d1c4da558"
 
@@ -360,6 +363,121 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
+def calculate_file_hash(filepath):
+    sha256 = hashlib.sha256()
+
+    try:
+        with open(filepath, "rb") as f:
+            while chunk := f.read(4096):
+                sha256.update(chunk)
+
+        return sha256.hexdigest()
+
+    except Exception as e:
+        return f"Error: {e}"
+
+def check_file_hash_virustotal(file_hash):
+    url = f"https://www.virustotal.com/api/v3/files/{file_hash}"
+
+    headers = {
+        "x-apikey": VT_API_KEY
+    }
+
+    try:
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            data = response.json()
+
+            stats = data["data"]["attributes"]["last_analysis_stats"]
+
+            malicious = stats.get("malicious", 0)
+            suspicious = stats.get("suspicious", 0)
+            harmless = stats.get("harmless", 0)
+
+            total_engines = malicious + suspicious + harmless
+
+            if malicious > 0:
+                verdict = "🚨 MALICIOUS"
+                color = "red"
+
+            elif suspicious > 0:
+                verdict = "⚠ SUSPICIOUS"
+                color = "yellow"
+
+            else:
+                verdict = "✅ SAFE"
+                color = "lightgreen"
+
+            return (
+                f"{verdict}\n\n"
+                f"VirusTotal Results\n\n"
+                f"Malicious: {malicious}\n"
+                f"Suspicious: {suspicious}\n"
+                f"Harmless: {harmless}\n\n"
+                f"{malicious + suspicious} / {total_engines} vendors flagged this file"
+            )   
+                
+        elif response.status_code == 404:
+            return "File hash not found in VirusTotal database."
+
+        else:
+            return f"VirusTotal Error: {response.status_code}"
+
+    except Exception as e:
+        return f"Error: {e}"
+
+def scan_file():
+    filepath = filedialog.askopenfilename()
+
+    if not filepath:
+        return
+
+    filename = os.path.basename(filepath)
+
+    result_label.config(text="Calculating file hash...")
+
+    file_hash = calculate_file_hash(filepath)
+
+    if file_hash.startswith("Error"):
+        result_label.config(text=file_hash)
+        return
+
+    result_label.config(
+        text=f"SHA256:\n{file_hash}\n\nChecking VirusTotal..."
+    )
+
+    vt_result = check_file_hash_virustotal(file_hash) 
+
+    if "MALICIOUS" in vt_result:
+        history_list.insert(0, f"[FILE] {filename} - MALICIOUS")
+
+    elif "SUSPICIOUS" in vt_result:
+        history_list.insert(0, f"[FILE] {filename} - SUSPICIOUS")
+
+    elif "SAFE" in vt_result:
+        history_list.insert(0, f"[FILE] {filename} - SAFE")
+
+    else:
+        history_list.insert(0, f"[FILE] {filename} - UNKNOWN")
+
+    if "MALICIOUS" in vt_result:
+        result_label.config(
+            text=f"File: {filename}\n\nSHA256:\n{file_hash}\n\n{vt_result}",
+            fg="red"
+        )
+
+    elif "SUSPICIOUS" in vt_result:
+        result_label.config(
+            text=f"File: {filename}\n\nSHA256:\n{file_hash}\n\n{vt_result}",
+            fg="yellow"
+        )
+
+    else:
+        result_label.config(
+            text=f"File: {filename}\n\nSHA256:\n{file_hash}\n\n{vt_result}",
+            fg="lightgreen"
+        )
 
 root = tk.Tk()
 
@@ -368,7 +486,7 @@ icon = PhotoImage(file=icon_path)
 root.iconphoto(True, icon)
 
 root.title("DejaVu Shield")
-root.geometry("620x700")
+root.geometry("720x820")
 root.configure(bg="#1e1e1e")
 
 # Title
@@ -397,9 +515,18 @@ tk.Button(button_frame, text="TXT", command=export_report, width=12, bg="#333333
 
 tk.Button(button_frame, text="CSV", command=export_csv, width=12, bg="#333333", fg="white").grid(row=1, column=2, padx=3, pady=3)
 
+tk.Button(
+    button_frame,
+    text="Scan File",
+    command=scan_file,
+    width=12,
+    bg="#333333",
+    fg="white"
+).grid(row=0, column=6, padx=5)
+
 # Result
 result_label = tk.Label(root, text="Result: ", bg="#1e1e1e", fg="white")
-result_label.pack(pady=10)
+result_label.pack(pady=4)
 
 # Reason
 reason_label = tk.Label(root, text="Reason: ", bg="#1e1e1e", fg="white")
@@ -411,18 +538,18 @@ source_label.pack(pady=5)
 
 # Risk Score
 score_label = tk.Label(root, text="Risk Score: ", bg="#1e1e1e", fg="white")
-score_label.pack(pady=10)
+score_label.pack(pady=3)
 
 risk_bar = ttk.Progressbar(root, length=300, mode="determinate", maximum=100)
-risk_bar.pack(pady=8)
+risk_bar.pack(pady=3)
 
-tk.Label(root, text="Recent Scans", bg="#1e1e1e", fg="white").pack(pady=(10, 0))
+tk.Label(root, text="Recent Scans", bg="#1e1e1e", fg="white").pack(pady=(3, 0))
 
 
 history_list = tk.Listbox(
     root,
     width=55,
-    height=3,
+    height=6,
     bg="#2d2d2d",
     fg="white"
 )
