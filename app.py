@@ -419,7 +419,14 @@ def check_file_hash_virustotal(file_hash):
             )   
                 
         elif response.status_code == 404:
-            return "File hash not found in VirusTotal database."
+            return (
+                "❓ UNKNOWN FILE\n\n"
+                "This file hash was not found in the VirusTotal database.\n"
+                "This does not mean the file is safe or malicious.\n\n"
+                "Recommendation:\n"
+                "Only run this file if you trust its source."
+            )
+          
 
         else:
             return f"VirusTotal Error: {response.status_code}"
@@ -458,6 +465,9 @@ def scan_file():
     elif "SAFE" in vt_result:
         history_list.insert(0, f"[FILE] {filename} - SAFE")
 
+    elif "UNKNOWN FILE" in vt_result:
+        history_list.insert(0, f"[FILE] {filename} - UNKNOWN")
+ 
     else:
         history_list.insert(0, f"[FILE] {filename} - UNKNOWN")
 
@@ -471,6 +481,12 @@ def scan_file():
         result_label.config(
             text=f"File: {filename}\n\nSHA256:\n{file_hash}\n\n{vt_result}",
             fg="yellow"
+        )
+
+    elif "UNKNOWN FILE" in vt_result:
+        result_label.config(
+            text=f"File: {filename}\n\nSHA256:\n{file_hash}\n\n{vt_result}",
+            fg="orange"
         )
 
     else:
