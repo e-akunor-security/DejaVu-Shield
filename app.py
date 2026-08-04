@@ -27,8 +27,47 @@ OFFICIAL_BRANDS = {
 SUSPICIOUS_WORDS = ["login", "secure", "update", "verify"]
 
 # -----------------------------
+# SESSION STATISTICS
+# -----------------------------
+
+session_stats = {
+    "total": 0,
+    "safe": 0,
+    "suspicious": 0,
+    "malicious": 0,
+    "unknown": 0
+}
+
+# -----------------------------
 # HELPER FUNCTIONS
 # -----------------------------
+
+def update_session_stats(result):
+    session_stats["total"] += 1
+
+    if result in session_stats:
+        session_stats[result] += 1
+
+def refresh_statistics_dashboard():
+    total_stats_label.config(
+        text=f"Total Scans: {session_stats['total']}"
+    )
+
+    safe_stats_label.config(
+        text=f"Safe: {session_stats['safe']}"
+    )
+
+    suspicious_stats_label.config(
+        text=f"Suspicious: {session_stats['suspicious']}"
+    )
+
+    malicious_stats_label.config(
+        text=f"Malicious: {session_stats['malicious']}"
+    )
+
+    unknown_stats_label.config(
+        text=f"Unknown: {session_stats['unknown']}"
+    )
 
 def extract_domain(url):
     if "://" in url:
@@ -458,18 +497,25 @@ def scan_file():
 
     if "MALICIOUS" in vt_result:
         history_list.insert(0, f"[FILE] {filename} - MALICIOUS")
+        update_session_stats("malicious")
 
     elif "SUSPICIOUS" in vt_result:
         history_list.insert(0, f"[FILE] {filename} - SUSPICIOUS")
-
-    elif "SAFE" in vt_result:
-        history_list.insert(0, f"[FILE] {filename} - SAFE")
+        update_session_stats("suspicious")
 
     elif "UNKNOWN FILE" in vt_result:
         history_list.insert(0, f"[FILE] {filename} - UNKNOWN")
- 
+        update_session_stats("unknown")
+
+    elif "SAFE" in vt_result:
+        history_list.insert(0, f"[FILE] {filename} - SAFE")
+        update_session_stats("safe")
+
     else:
         history_list.insert(0, f"[FILE] {filename} - UNKNOWN")
+        update_session_stats("unknown")
+
+    refresh_statistics_dashboard()
 
     if "MALICIOUS" in vt_result:
         result_label.config(
@@ -502,11 +548,98 @@ icon = PhotoImage(file=icon_path)
 root.iconphoto(True, icon)
 
 root.title("DejaVu Shield")
-root.geometry("720x820")
+root.geometry("720x980")
 root.configure(bg="#1e1e1e")
 
 # Title
 tk.Label(root, text="DejaVu Shield", font=("Arial", 16, "bold")).pack(pady=10)
+
+# -----------------------------
+# SESSION STATISTICS DASHBOARD
+# -----------------------------
+
+stats_frame = tk.Frame(
+    root,
+    bg="#252525",
+    bd=1,
+    relief="solid"
+)
+stats_frame.pack(fill="x", padx=20, pady=(0, 10))
+
+# Dashboard logo
+dashboard_logo = PhotoImage(
+    file=resource_path("shield.png")
+).subsample(6, 6)
+
+dashboard_logo_label = tk.Label(
+    stats_frame,
+    image=dashboard_logo,
+    bg="#252525"
+)
+dashboard_logo_label.grid(
+    row=0,
+    column=0,
+    rowspan=3,
+    padx=12,
+    pady=8
+)
+
+# Dashboard heading
+tk.Label(
+    stats_frame,
+    text="Session Statistics",
+    font=("Arial", 12, "bold"),
+    bg="#252525",
+    fg="white"
+).grid(
+    row=0,
+    column=1,
+    columnspan=5,
+    pady=(8, 4)
+)
+
+# Statistics labels
+total_stats_label = tk.Label(
+    stats_frame,
+    text="Total Scans: 0",
+    bg="#252525",
+    fg="white"
+)
+total_stats_label.grid(row=1, column=1, padx=8, pady=4)
+
+safe_stats_label = tk.Label(
+    stats_frame,
+    text="Safe: 0",
+    bg="#252525",
+    fg="lightgreen"
+)
+safe_stats_label.grid(row=1, column=2, padx=8, pady=4)
+
+suspicious_stats_label = tk.Label(
+    stats_frame,
+    text="Suspicious: 0",
+    bg="#252525",
+    fg="yellow"
+)
+suspicious_stats_label.grid(row=1, column=3, padx=8, pady=4)
+
+malicious_stats_label = tk.Label(
+    stats_frame,
+    text="Malicious: 0",
+    bg="#252525",
+    fg="red"
+)
+malicious_stats_label.grid(row=2, column=1, padx=8, pady=(4, 8))
+
+unknown_stats_label = tk.Label(
+    stats_frame,
+    text="Unknown: 0",
+    bg="#252525",
+    fg="orange"
+)
+unknown_stats_label.grid(row=2, column=2, padx=8, pady=(4, 8))
+
+refresh_statistics_dashboard()
 
 # Input label
 tk.Label(root, text="Enter URL:", font=("Arial", 12)).pack()
@@ -565,7 +698,7 @@ tk.Label(root, text="Recent Scans", bg="#1e1e1e", fg="white").pack(pady=(3, 0))
 history_list = tk.Listbox(
     root,
     width=55,
-    height=6,
+    height=8,
     bg="#2d2d2d",
     fg="white"
 )

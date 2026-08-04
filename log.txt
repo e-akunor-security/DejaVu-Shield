@@ -114,3 +114,18 @@
 2026-05-09 21:19:52.568213 | https://192.168.2.102 | suspicious | uses raw IP address
 2026-05-14 12:48:39.836974 | chrome installer | safe | no suspicious pattern found
 2026-05-21 23:35:31.349655 | https://google.com@evil.com | suspicious | contains @ symbol
+2026-07-27 12:22:53.311988 | http://testsafebrowsing.appspot.com/s/phishing.html | safe | 0 vendors flagged this URL
+2026-07-27 12:23:35.663646 | http://malware.testing.google.test/testing/malware/ | suspicious | too many subdomains
+2026-07-27 12:24:14.413826 | http://testsafebrowsing.appspot.com/s/phishing.html | malicious | 15 vendors flagged this URL
+2026-07-27 12:25:26.413461 | http://testsafebrowsing.appspot.com/s/phishing.html | malicious | 15 vendors flagged this URL
+2026-07-27 12:25:51.413036 | http://malware.testing.google.test/testing/malware/ | suspicious | too many subdomains
+2026-08-04 21:23:28.375164 | https://www.google.com | safe | 0 vendors flagged this URL
+2026-08-04 21:23:57.646557 | https://github.com | safe | 0 vendors flagged this URL
+2026-08-04 21:24:19.351983 | https://www.microsoft.com | safe | 0 vendors flagged this URL
+2026-08-04 21:24:49.766468 | https://ubuntu.com | safe | 0 vendors flagged this URL
+2026-08-04 21:25:19.971846 | https://www.virustotal.com | safe | no suspicious pattern found
+2026-08-04 21:25:50.023178 | http://paypal-login-security-update.xyz | suspicious | uses suspicious top-level domain
+2026-08-04 21:26:47.478772 | http://192.168.1.10/login | suspicious | uses raw IP address
+2026-08-04 21:27:10.646317 | http://bit.ly/example | suspicious | uses URL shortener
+2026-08-04 21:27:50.458743 | http://verify-account-secure-login.top | suspicious | uses suspicious top-level domain
+2026-08-04 21:28:25.532568 | http://login.microsoft.verify-account.click | suspicious | uses suspicious top-level domain
