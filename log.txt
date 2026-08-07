@@ -129,3 +129,5 @@
 2026-08-04 21:27:10.646317 | http://bit.ly/example | suspicious | uses URL shortener
 2026-08-04 21:27:50.458743 | http://verify-account-secure-login.top | suspicious | uses suspicious top-level domain
 2026-08-04 21:28:25.532568 | http://login.microsoft.verify-account.click | suspicious | uses suspicious top-level domain
+2026-08-08 00:28:50.300326 | https://www.google.com | safe | 0 vendors flagged this URL
+2026-08-08 00:29:22.507226 | www.google.com@evil.org | suspicious | contains @ symbol

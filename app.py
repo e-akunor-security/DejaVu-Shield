@@ -292,10 +292,17 @@ def run_check():
 
     if result == "malicious":
         result_label.config(fg="red")
+        update_session_stats("malicious")
+
     elif result == "suspicious":
-        result_label.config(fg="orange")
+          result_label.config(fg="orange")
+          update_session_stats("suspicious")
+
     else:
-        result_label.config(fg="green")
+          result_label.config(fg="green")
+          update_session_stats("safe")
+
+    refresh_statistics_dashboard()
 
     reason_label.config(text="Reason: " + reason)
     source_label.config(text="Source: " + source)
