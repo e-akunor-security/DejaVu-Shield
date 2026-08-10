@@ -1,5 +1,7 @@
 # 🛡️ DejaVu Shield
 
+**Current Stable Version: v1.1**
+
 <div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -16,7 +18,7 @@
 
 ## 📋 Overview
 
-**DejaVu Shield** is a comprehensive cybersecurity-focused desktop application built with Python and Tkinter. It provides real-time threat analysis, URL reputation checking through VirusTotal integration, and comprehensive logging for security professionals and researchers.
+**DejaVu Shield** is a comprehensive cybersecurity-focused desktop application built with Python and Tkinter. It provides threat analysis, URL reputation checking through VirusTotal integration, and comprehensive logging for security professionals and researchers.
 
 ### 🎯 Key Capabilities
 
@@ -33,7 +35,7 @@
 
 - 🔍 **URL Reputation Analysis** - Verify URL safety and threat levels
 - 🦠 **VirusTotal Integration** - Access comprehensive threat intelligence database
-- 🚨 **Real-time Threat Scanning** - Immediate threat detection and reporting
+- 🚨 **Threat Scanning** - Analyze URLs and files for potential security threats
 - 📊 **Logging System** - Complete operation audit trail
 - 🪟 **Windows Executable Support** - Deploy as standalone .exe using PyInstaller
 - 🎨 **Dark-Themed GUI** - Professional, dark-mode interface for extended use

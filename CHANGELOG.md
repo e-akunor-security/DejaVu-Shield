@@ -1,3 +1,23 @@
+## v1.1 - Stable Release
+
+### Added
+- File reputation scanning with SHA-256 hashing
+- VirusTotal file hash lookup
+- SAFE, SUSPICIOUS, MALICIOUS, and UNKNOWN file verdicts
+- Color-coded file scan results
+- Filename display in scan results
+- File scan history integration
+- Session Statistics Dashboard
+- Shield logo in the dashboard
+- URL scans connected to session statistics
+- Improved layout for Recent Scans visibility
+
+### Improved
+- Windows executable packaging
+- In-app icon handling
+- Overall GUI layout and usability
+- GitHub project structure and version tracking
+
 # Changelog
 
 All notable changes to DejaVu Shield will be documented in this file.
