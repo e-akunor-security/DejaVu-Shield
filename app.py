@@ -6,7 +6,7 @@ import hashlib
 import os
 from tkinter import filedialog
 
-VT_API_KEY = "b2520d995c9ef62f0311019ac49f2b45be0643bff8732891de631f1d1c4da558"
+VT_API_KEY = "7f4f4e499d2905e46057be07259ecf927f054c25629339e6a856471e8128e18c"
 
 # -----------------------------
 # DATA
