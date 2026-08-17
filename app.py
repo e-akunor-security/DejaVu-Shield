@@ -6,7 +6,7 @@ import hashlib
 import os
 from tkinter import filedialog
 
-VT_API_KEY = "7f4f4e499d2905e46057be07259ecf927f054c25629339e6a856471e8128e18c"
+try: from dotenv import load_dotenv load_dotenv() except Exception: pass VT_API_KEY = os.getenv("VIRUSTOTAL_API_KEY", "")
 
 # -----------------------------
 # DATA
