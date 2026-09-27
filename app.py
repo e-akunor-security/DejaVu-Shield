@@ -500,7 +500,43 @@ def scan_file():
         text=f"SHA256:\n{file_hash}\n\nChecking VirusTotal..."
     )
 
-    vt_result = check_file_hash_virustotal(file_hash) 
+    vt_result = check_file_hash_virustotal(file_hash)
+
+    if "UNKNOWN FILE" in vt_result:
+        reason_label.config(text="Reason: File hash not found in VirusTotal database")
+        source_label.config(text="Source: VirusTotal")
+        score_label.config(text="Risk Score: 0/100")
+        risk_bar["value"] = 0
+
+    elif "SAFE" in vt_result:
+        reason_label.config(text="Reason: No malicious or suspicious detections")
+        source_label.config(text="Source: VirusTotal")
+        score_label.config(text="Risk Score: 10/100")
+        risk_bar["value"] = 10 
+
+    if "MALICIOUS" in vt_result:
+        result_label.config(
+            text=f"File: {filename}  |  MALICIOUS\nSHA256: {file_hash}",
+            fg="red"
+        )
+
+    elif "SUSPICIOUS" in vt_result:
+        result_label.config(
+            text=f"File: {filename}  |  SUSPICIOUS\nSHA256: {file_hash}",
+            fg="yellow"
+        )
+
+    elif "UNKNOWN FILE" in vt_result:
+        result_label.config(
+             text=f"File: {filename}  |  UNKNOWN FILE\nSHA256: {file_hash}",
+             fg="orange"
+        )
+
+    else:
+        result_label.config(
+            text=f"File: {filename}  |  SAFE\nSHA256: {file_hash}",
+            fg="lightgreen"
+        )
 
     if "MALICIOUS" in vt_result:
         history_list.insert(0, f"[FILE] {filename} - MALICIOUS")
@@ -523,30 +559,6 @@ def scan_file():
         update_session_stats("unknown")
 
     refresh_statistics_dashboard()
-
-    if "MALICIOUS" in vt_result:
-        result_label.config(
-            text=f"File: {filename}\n\nSHA256:\n{file_hash}\n\n{vt_result}",
-            fg="red"
-        )
-
-    elif "SUSPICIOUS" in vt_result:
-        result_label.config(
-            text=f"File: {filename}\n\nSHA256:\n{file_hash}\n\n{vt_result}",
-            fg="yellow"
-        )
-
-    elif "UNKNOWN FILE" in vt_result:
-        result_label.config(
-            text=f"File: {filename}\n\nSHA256:\n{file_hash}\n\n{vt_result}",
-            fg="orange"
-        )
-
-    else:
-        result_label.config(
-            text=f"File: {filename}\n\nSHA256:\n{file_hash}\n\n{vt_result}",
-            fg="lightgreen"
-        )
 
 root = tk.Tk()
 
@@ -681,7 +693,14 @@ tk.Button(
 ).grid(row=0, column=6, padx=5)
 
 # Result
-result_label = tk.Label(root, text="Result: ", bg="#1e1e1e", fg="white")
+result_label = tk.Label(
+    root,
+    text="Result: ",
+    bg="#1e1e1e",
+    fg="white",
+    wraplength=800,
+    justify="center"
+)
 result_label.pack(pady=4)
 
 # Reason
