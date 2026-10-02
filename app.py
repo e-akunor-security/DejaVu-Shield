@@ -4,9 +4,15 @@ from datetime import datetime
 import requests
 import hashlib
 import os
+import time
+from dotenv import load_dotenv
 from tkinter import filedialog
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
-VT_API_KEY = "7f4f4e499d2905e46057be07259ecf927f054c25629339e6a856471e8128e18c"
+load_dotenv()
+
+VT_API_KEY = os.getenv("VT_API_KEY")
 
 # -----------------------------
 # DATA
@@ -486,6 +492,10 @@ def scan_file():
     if not filepath:
         return
 
+    scan_file_path(filepath)
+
+
+def scan_file_path(filepath):
     filename = os.path.basename(filepath)
 
     result_label.config(text="Calculating file hash...")
@@ -559,6 +569,64 @@ def scan_file():
         update_session_stats("unknown")
 
     refresh_statistics_dashboard()
+
+# ----------------------------
+# REAL-TIME DOWNLOAD MONITOR
+# ----------------------------
+def wait_for_file_stable(filepath, checks=3, delay=1):
+    last_size = -1
+
+    for _ in range(checks):
+        try:
+            current_size = os.path.getsize(filepath)
+        except OSError:
+            return False
+
+        if current_size == last_size:
+            return True
+
+        last_size = current_size
+        time.sleep(delay)
+
+    return False
+
+class DownloadHandler(FileSystemEventHandler):
+    def on_created(self, event):
+        if event.is_directory:
+            return
+
+        filepath = event.src_path
+        filename = os.path.basename(filepath)
+
+        # Ignore temporary/incomplete browser downloads
+        if filename.endswith((".crdownload", ".part", ".tmp")) or filename.startswith(".com.google.Chrome"):
+            return
+
+        print(f"[MONITOR] New download detected: {filename}")
+
+        if not wait_for_file_stable(filepath):
+            return
+
+        root.after(0, lambda: scan_file_path(filepath))
+
+def start_download_monitor():
+    downloads_folder = os.path.expanduser("~/Downloads")
+
+    event_handler = DownloadHandler()
+    observer = Observer()
+
+    observer.schedule(
+        event_handler,
+        downloads_folder,
+        recursive=False
+    )
+
+    observer.daemon = True
+    observer.start()
+
+    print(f"[MONITOR] Watching Downloads folder: {downloads_folder}")
+
+    return observer
 
 root = tk.Tk()
 
@@ -729,5 +797,15 @@ history_list = tk.Listbox(
     fg="white"
 )
 history_list.pack(pady=5, fill="x", padx=20)
+
+def on_close():
+    download_observer.stop()
+    download_observer.join(timeout=2)
+    root.destroy()
+
+
+download_observer = start_download_monitor()
+
+root.protocol("WM_DELETE_WINDOW", on_close)
 
 root.mainloop()
