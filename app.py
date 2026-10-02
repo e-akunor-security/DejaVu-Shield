@@ -573,7 +573,7 @@ def scan_file_path(filepath):
 # ----------------------------
 # REAL-TIME DOWNLOAD MONITOR
 # ----------------------------
-def wait_for_file_stable(filepath, checks=3, delay=1):
+def wait_for_file_stable(filepath, checks=10, delay=0.5):
     last_size = -1
 
     for _ in range(checks):
@@ -604,10 +604,26 @@ class DownloadHandler(FileSystemEventHandler):
 
         print(f"[MONITOR] New download detected: {filename}")
 
-        if not wait_for_file_stable(filepath):
-            return
+        # Give the browser time to finalize the downloaded file before scanning
+        root.after(1500, lambda: scan_file_path(filepath))
 
-        root.after(0, lambda: scan_file_path(filepath))
+def on_moved(self, event):
+    if event.is_directory:
+        return
+
+    filepath = event.dest_path
+    filename = os.path.basename(filepath)
+
+    # Ignore temporary/incomplete browser downloads
+    if filename.endswith((".crdownload", ".part", ".tmp")) or filename.startswith(".com.google.Chrome"):
+        return
+
+    print(f"[MONITOR] Completed download detected: {filename}")
+
+    if not wait_for_file_stable(filepath):
+        return
+
+    root.after(0, lambda: scan_file_path(filepath))
 
 def start_download_monitor():
     downloads_folder = os.path.expanduser("~/Downloads")
